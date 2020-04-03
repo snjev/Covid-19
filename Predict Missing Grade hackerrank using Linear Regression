@@ -1,0 +1,21 @@
+import pandas as pd
+import json
+
+num_lines = int(input())
+inputs = [json.loads(input()) for _ in range(num_lines)]
+test_df = pd.DataFrame(inputs).fillna(0)
+with open('training.json') as f:
+    data = [json.loads(line) for line in f]
+    data.remove(data[0])
+    training_data = pd.DataFrame(data).fillna(0)
+
+target = training_data['Mathematics']
+target = pd.DataFrame(target)
+training_data.drop(['Mathematics','serial'],axis=1,inplace=True)
+from sklearn.linear_model import LinearRegression
+clf = LinearRegression()
+clf.fit(training_data[['Physics','English','Economics']],target['Mathematics'])
+#print(test_df.head())
+p = clf.predict(test_df[['Physics','English','Economics']])
+for i in p:
+    print(int(i))
